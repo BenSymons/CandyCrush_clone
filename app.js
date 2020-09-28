@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const grid = document.querySelector('.grid');
+    const grid = document.querySelector('.grid')
     const width = 8
     const scoreDisplay = document.getElementById('score')
     const squares = []
     let score = 0
     const candyColours = [
-        'url(images/red-candy.png)',
-        'url(images/yellow-candy.png)',
-        'url(images/orange-candy.png)',
-        'url(images/purple-candy.png)',
-        'url(images/green-candy.png)',
-        'url(images/blue-candy.png)'
+        'url(candyImages/red-candy.png)',
+        'url(candyImages/yellow-candy.png)',
+        'url(candyImages/orange-candy.png)',
+        'url(candyImages/purple-candy.png)',
+        'url(candyImages/green-candy.png)',
+        'url(candyImages/blue-candy.png)'
     ]
 
     function createBoard() {
@@ -26,10 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 createBoard()
 
-let colorBeingDragged; 
-let colorBeingReplaced; 
-let squareIdBeingDragged; 
-let squareIdBeingReplaced;
+let candyBeingDragged ,candyBeingReplaced ,candyIdBeingDragged ,candyIdBeingReplaced
 
 squares.forEach(square => square.addEventListener('dragstart', dragStart))
 squares.forEach(square => square.addEventListener('dragend', dragEnd))
@@ -39,9 +36,8 @@ squares.forEach(square => square.addEventListener('drageleave', dragLeave))
 squares.forEach(square => square.addEventListener('drop', dragDrop))
 
 function dragStart(){
-    colorBeingDragged = this.style.backgroundImage
-    squareIdBeingDragged = parseInt(this.id)
-    // this.style.backgroundImage = ''
+    candyBeingDragged = this.style.backgroundImage
+    candyIdBeingDragged = parseInt(this.id)
 }
 
 function dragOver(e) {
@@ -57,23 +53,28 @@ function dragLeave() {
 }
 
 function dragDrop() {
-    colorBeingReplaced = this.style.backgroundImage
-    squareIdBeingReplaced = parseInt(this.id)
-    this.style.backgroundImage = colorBeingDragged
-    squares[squareIdBeingDragged].style.backgroundImage = colorBeingReplaced
+    candyBeingReplaced = this.style.backgroundImage
+    candyIdBeingReplaced = parseInt(this.id)
+    this.style.backgroundImage = candyBeingDragged
+    squares[candyIdBeingDragged].style.backgroundImage = candyBeingReplaced
 }
 
 function dragEnd() {
     //What is a valid move?
-    let validMoves = [squareIdBeingDragged -1 , squareIdBeingDragged -width, squareIdBeingDragged +1, squareIdBeingDragged +width]
-    let validMove = validMoves.includes(squareIdBeingReplaced)
+    let validMoves = [
+        candyIdBeingDragged -1 , 
+        candyIdBeingDragged -width, 
+        candyIdBeingDragged +1, 
+        candyIdBeingDragged +width
+    ]
+    let validMove = validMoves.includes(candyIdBeingReplaced)
 
-    if (squareIdBeingReplaced && validMove) {
-        squareIdBeingReplaced = null
-    }  else if (squareIdBeingReplaced && !validMove) {
-       squares[squareIdBeingReplaced].style.backgroundImage = colorBeingReplaced
-       squares[squareIdBeingDragged].style.backgroundImage = colorBeingDragged
-    } else  squares[squareIdBeingDragged].style.backgroundImage = colorBeingDragged
+    if (candyIdBeingReplaced && validMove) {
+        candyIdBeingReplaced = null
+    }  else if (candyIdBeingReplaced && !validMove) {
+       squares[candyIdBeingReplaced].style.backgroundImage = candyBeingReplaced
+       squares[candyIdBeingDragged].style.backgroundImage = candyBeingDragged
+    } else  squares[candyIdBeingDragged].style.backgroundImage = candyBeingDragged
 }
 
 function moveDown() {
@@ -83,7 +84,7 @@ function moveDown() {
             squares[i].style.backgroundImage = ''
             const firstRow = [0, 1, 2, 3, 4, 5, 6, 7]
             const isFirstRow = firstRow.includes(i)
-            if (isFirstRow && squares[i].style.backgroundImage === '') {
+            if (isFirstRow && (squares[i].style.backgroundImage === '')) {
                 let randomColour = Math.floor(Math.random() * candyColours.length)
                 squares[i].style.backgroundImage = candyColours[randomColour]
             }
@@ -91,54 +92,34 @@ function moveDown() {
     }
 }
 
-function checkRowForFive() {
-    for (i = 0; i < 59; i++) {
-        let rowOfFive = [i, i+1, i+2, i+3, i+4]
-        let decidedColor = squares[i].style.backgroundImage
-        const isBlank = squares[i].style.backgroundImage === ''
-        const notValid = [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38, 39, 44, 45, 46, 47, 52, 53, 54, 55];
-        if (notValid.includes(i)) continue
-
-        if (rowOfFive.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
-            score += 5
-            scoreDisplay.innerHTML = score
-            rowOfFive.forEach(index => {
-                squares[index].style.backgroundImage = ''
-            })
-        }
-    }
-}
-
-checkRowForFive()
-
 function checkRowForFour() {
     for (i = 0; i < 60; i++) {
-        let rowOfFour = [i, i+1, i+2, i+3];
-        let decidedColor = squares[i].style.backgroundImage;
-        const isBlank = squares[i].style.backgroundImage === '';
+        let rowOfFour = [i, i+1, i+2, i+3]
+        let decidedColor = squares[i].style.backgroundImage
+        const isBlank = squares[i].style.backgroundImage === ''
 
-        const notValid = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
+        const notValid = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55]
         if (notValid.includes(i)) continue
 
         if (rowOfFour.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
-            score += 4;
-            scoreDisplay.innerHTML = score;
+            score += 4
+            scoreDisplay.innerHTML = score
             rowOfFour.forEach(index => {
                 squares[index].style.backgroundImage = ''
             })
         }
     }
 }
-checkRowForFour();
+checkRowForFour()
 
 function checkColumnForFour() {
     for (i = 0; i < 39; i++) {
-        let columnOfFour = [i, i+width, i+width*2, i+width*3];
-        let decidedColor = squares[i].style.backgroundImage;
-        const isBlank = squares[i].style.backgroundImage === '';
+        let columnOfFour = [i, i+width, i+width*2, i+width*3]
+        let decidedColor = squares[i].style.backgroundImage
+        const isBlank = squares[i].style.backgroundImage === ''
 
         if (columnOfFour.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
-            score += 4;
+            score += 4
             scoreDisplay.innerHTML = score
             columnOfFour.forEach(index => {
                 squares[index].style.backgroundImage = ''
@@ -147,7 +128,7 @@ function checkColumnForFour() {
     }
 }
 
-checkColumnForFour();
+checkColumnForFour()
 
 function checkRowForThree() {
     for (i = 0; i < 61; i ++) {
@@ -167,13 +148,13 @@ function checkRowForThree() {
         }
     }
 }
-checkRowForThree();
+checkRowForThree()
 
 function checkColumnForThree() {
     for (i = 0; i < 47; i++) {
-        let columnOfThree = [i, i+width, i+width*2];
-        let decidedColor = squares[i].style.backgroundImage;
-        const isBlank = squares[i].style.backgroundImage === '';
+        let columnOfThree = [i, i+width, i+width*2]
+        let decidedColor = squares[i].style.backgroundImage
+        const isBlank = squares[i].style.backgroundImage === ''
 
         if (columnOfThree.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
             score += 3
@@ -185,14 +166,13 @@ function checkColumnForThree() {
     }
 }
 
-checkColumnForThree();
+checkColumnForThree()
 
 window.setInterval(function() {
-    moveDown()
-    checkRowForFive()
     checkRowForFour()
     checkRowForThree()
     checkColumnForThree()
+    moveDown()
 }, 100)
 
 })
